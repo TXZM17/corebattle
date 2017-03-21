@@ -42,6 +42,17 @@ function BattleContext:getAllEntity()
     return ret
 end
 
+function BattleContext:getAllAliveEntity()
+    local ret = self:getAllEntity()
+    local max = #ret
+    for i=max,1,-1 do
+        if ret[i].context:getHp()<=0 then
+            table.remove(ret, i)
+        end
+    end
+    return ret
+end
+
 function BattleContext:unregistEntity(entityId)
     self._entitymap[entityId] = nil
 end
