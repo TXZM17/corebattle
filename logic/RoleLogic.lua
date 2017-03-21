@@ -25,7 +25,9 @@ end
 function RoleLogic:atk()
     local targets = self.director:searchEntity(function(entity)
         return entity.id~=self.id and entity.context:getHp()>0
-    end, 2)
+    end)
+    ArrayUtil.shuffle(targets)
+    targets = ArrayUtil.copyArray(targets,1,2)
     local atkContext = AtkContext.create(self, targets)
     local event = AtkEvent.create(atkContext)
     self.director:addEvent(event)
