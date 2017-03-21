@@ -5,4 +5,7 @@ globals = {
 	"globals",
 	"inherit",
 	"invokeWithSuper",
+	"shuffle",
+	"filterArray",
+	"mergeSort",
 }
