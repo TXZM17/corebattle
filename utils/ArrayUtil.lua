@@ -1,4 +1,4 @@
-module("SortUtil", package.seeall)
+module("ArrayUtil", package.seeall)
 
 function shuffle(array)
     local n = #array
@@ -38,4 +38,19 @@ function mergeSort(collect, compare, i, j)
         table.insert(collect, p, table.remove(collect, q))
         p = p+1
     end
+end
+
+function copyArray(array, startIndex, length)
+    local ret = {}
+    startIndex = startIndex or 1
+    length = length or #array
+    for i=startIndex, startIndex+length-1 do
+        local item = array[i]
+        if item then
+            table.insert(ret, item)
+        else
+            break;
+        end
+    end
+    return ret
 end

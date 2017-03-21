@@ -16,6 +16,7 @@ end
 
 function BattleDirector:startBattle()
     print("BattleDirector start");
+    math.randomseed(self.context:getSeed())
     self:mainLoop()
 end
 
@@ -64,12 +65,11 @@ function BattleDirector:removeEntity(entityId)
     end
 end
 
-function BattleDirector:searchEntity(filterFunc, max)
+function BattleDirector:searchEntity(filterFunc)
     local all = self.context:getAllEntity()
-    max = max or #all
     local ret = {}
     for _,v in ipairs(all) do
-        if #ret<max and filterFunc(v) then
+        if filterFunc(v) then
             table.insert(ret, v)
         end
     end

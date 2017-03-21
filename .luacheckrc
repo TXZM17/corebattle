@@ -8,4 +8,6 @@ globals = {
 	"shuffle",
 	"filterArray",
 	"mergeSort",
+	"copyArray",
+	"ArrayUtil",
 }

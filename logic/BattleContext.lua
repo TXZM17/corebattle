@@ -57,4 +57,12 @@ function BattleContext:unregistEntity(entityId)
     self._entitymap[entityId] = nil
 end
 
+function BattleContext:setSeed(seed)
+    self._randonSeed = seed
+end
+
+function BattleContext:getSeed()
+    return self._randonSeed
+end
+
 return BattleContext
