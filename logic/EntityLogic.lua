@@ -1,7 +1,7 @@
 local EntityLogic = {}
 
 EntityLogic._toAllocateId = 1
-EntityLogic._type = "EntityLogic"
+EntityLogic.type = "EntityLogic"
 
 function EntityLogic.create(context)
     local ret = {}

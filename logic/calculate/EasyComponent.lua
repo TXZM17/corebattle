@@ -1,7 +1,7 @@
 local BaseComponent = require("logic.calculate.BaseComponent")
 local EasyComponent = BaseComponent.create()
 
-EasyComponent.comp_type = "EasyComponent"
+EasyComponent.type = "EasyComponent"
 
 function EasyComponent.create()
     local ret = {}
@@ -15,7 +15,7 @@ function EasyComponent:init()
 end
 
 function EasyComponent:calculate(context, lastResult)
-    print("component:", self.comp_type, self.comp_id)
+    print("component:", self.type, self.id)
     lastResult = lastResult or context.hp
     local atk = context.atk
     return true, lastResult-atk

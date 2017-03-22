@@ -4,7 +4,7 @@ local AtkContext = require("logic.event.AtkContext")
 
 local RoleLogic = EntityLogic.create({})
 
-RoleLogic._type = "RoleLogic"
+RoleLogic.type = "RoleLogic"
 
 function RoleLogic.create(context)
     local ret = {}
