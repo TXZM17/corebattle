@@ -33,7 +33,7 @@ function Calculator:calculate()
     return lastResult
 end
 
---notice: allow same type component,but same type component, be careful
+--notice: don't allow same id component,but same type component, be careful
 function Calculator:addComponent(component)
     self:removeComponent(component.comp_id)
     table.insert(self._components, component)
