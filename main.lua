@@ -1,5 +1,6 @@
 require "utils.OOUtil"
 require "utils.ArrayUtil"
+require "const.Constants"
 
 local BattleDirector = require("logic.BattleDirector")
 local EntityLogic = require("logic.RoleLogic")

@@ -33,12 +33,12 @@ function BattleDirector:update(param)
     print("BattleDirector update:", self._frameIndex)
     if self._events[self._frameIndex] then
         for _,event in ipairs(self._events[self._frameIndex]) do
-            event:execute()
+            event:execute(self._frameIndex)
         end
     end
     local entityList = param.entityList
     for _,entity in ipairs(entityList) do
-        entity:update()
+        entity:update(self._frameIndex)
     end
 end
 
@@ -74,6 +74,18 @@ function BattleDirector:searchEntity(filterFunc)
         end
     end
     return ret
+end
+
+function BattleDirector:getRangeTargets(range)
+    -- 我们假定所有的entity处于同一坐标系统内
+    local all = self.context:getAllEntity()
+    local targets = {}
+    for _,v in ipairs(all) do
+        if range:inRange(v) then
+            table.insert(targets, v)
+        end
+    end
+    return targets
 end
 
 function BattleDirector:addEvent(event)

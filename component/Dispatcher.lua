@@ -26,6 +26,7 @@ function Dispatcher:removeSubscriber(subscriberId)
 end
 
 function Dispatcher:dispatch(msg)
+    table.insert(self._messageQueue, msg)
     for _,subscriber in ipairs(self._subscribers) do
         subscriber:receive(msg)
     end

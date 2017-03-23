@@ -13,6 +13,9 @@ end
 function EntityLogic:init(context)
     self.context = context
     EntityLogic.allocateId(self)
+    if self.context.anchor==nil then
+        self.context.anchor = {x=0,y=0}
+    end
 end
 
 function EntityLogic:update()

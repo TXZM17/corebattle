@@ -37,4 +37,12 @@ function RoleLogic:onHurt(hurtNum)
     self.context:onHurt(hurtNum)
 end
 
+function RoleLogic:onPointHurt(hurtInfo)
+    --TODO
+end
+
+function RoleLogic:onRangeHurt(hurtInfo)
+    --TODO
+end
+
 return RoleLogic

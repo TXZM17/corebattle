@@ -10,4 +10,6 @@ globals = {
 	"mergeSort",
 	"copyArray",
 	"ArrayUtil",
+	"Constants",
+	"SHAPE",
 }
