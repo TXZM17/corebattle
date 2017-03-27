@@ -1,17 +1,18 @@
 local RoleContext = {}
 
-function RoleContext.create(cfgId)
+function RoleContext.create(params)
     local ret = {}
     setmetatable(ret, {__index=RoleContext})
-    ret:init(cfgId)
+    ret:init(params)
     return ret
 end
 
-function RoleContext:init(cfgId)
-    self.hpMax = 100;
-    self.atk = {10,15}
+function RoleContext:init(params)
+    self.hpMax = params.hp;
+    self.atk = params.atk or {1,1}
     self.hp = self.hpMax
-    self.configId = cfgId
+    self.modelId = params.id
+    self.name = params.name
 end
 
 function RoleContext:getAtk()

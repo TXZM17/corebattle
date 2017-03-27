@@ -3,6 +3,7 @@ local IncrementCalculator = Calculator.create()
 
 IncrementCalculator.type = "IncrementCalculator"
 
+-- 如果加成是仅针对玩家基础值的时候，使用base*scale作为increment
 function IncrementCalculator.create(increment)
     local ret = {}
     setmetatable(ret, {__index=IncrementCalculator})

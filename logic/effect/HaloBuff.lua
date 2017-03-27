@@ -12,7 +12,8 @@ end
 
 function HaloBuff:init(lastFrame)
     Buff.init(self, lastFrame)
-    self.lastFrame = 1
+    -- 保证一旦角色离开光环范围，持续一段时间后效果就失效
+    self.lastFrame = lastFrame or 1
     self.remainFrame = self.lastFrame
 end
 
@@ -21,7 +22,7 @@ function HaloBuff:update(target)
     self.remainFrame = self.remainFrame - 1
 end
 
-function HaloBuff:updateValid(target)
+function HaloBuff:checkValid(target)
     return self.remainFrame>0 and Buff.checkValid(self, target)
 end
 

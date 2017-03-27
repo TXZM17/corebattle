@@ -14,7 +14,7 @@ end
 function CalculatorChain:init(owner)
     self._owner = owner
     self._calculators = {}
-    self._context = self._owner:createCalculateContext()
+    self._context = self._owner.context
     -- default sort by priority
     self._sfFunc = PrioritySorter
 end

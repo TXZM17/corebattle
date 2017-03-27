@@ -3,6 +3,7 @@ local Calculator = {comp_type="Calculator"}
 Calculator._toAllocateId = 1
 Calculator.type = "Calculator"
 
+-- calculator不改变玩家的基础属性，effect可以，这是区别
 function Calculator.create()
     local ret = {}
     setmetatable(ret, {__index=Calculator})
