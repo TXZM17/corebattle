@@ -1,8 +1,8 @@
-local function PrioritySorter(components)
-    mergeSort(components, function(x,y)
+local function PrioritySorter(calculators)
+    mergeSort(calculators, function(x,y)
         return y.priority-x.priority
     end)
-    return components
+    return calculators
 end
 
 return PrioritySorter
