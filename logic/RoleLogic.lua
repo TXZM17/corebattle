@@ -1,6 +1,5 @@
 local EntityLogic = require("logic.EntityLogic")
-local AtkEvent = require("logic.event.AtkEvent")
-local AtkContext = require("logic.event.AtkContext")
+local AtkAction = require("logic.action.AtkAction")
 
 local RoleLogic = EntityLogic.create({})
 
@@ -28,9 +27,11 @@ function RoleLogic:atk()
     end)
     ArrayUtil.shuffle(targets)
     targets = ArrayUtil.copyArray(targets,1,2)
-    local atkContext = AtkContext.create(self, targets)
-    local event = AtkEvent.create(atkContext)
-    self.director:addEvent(event)
+    local atkAction = AtkAction.create(self, targets)
+    atkAction:setParams({
+        attackType=AtkAction.ATTACK_TYPE.NORMAL
+    })
+    self.director:addAction(atkAction)
 end
 
 function RoleLogic:onHurt(hurtInfo)

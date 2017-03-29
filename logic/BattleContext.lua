@@ -42,8 +42,8 @@ function BattleContext:getAllEntity()
     return ret
 end
 
-function BattleContext:getAllAliveEntity()
-    local ret = self:getAllEntity()
+function BattleContext:getAllAliveRole()
+    local ret = self:getAllEntityByType("RoleLogic", true)
     local max = #ret
     for i=max,1,-1 do
         if ret[i].context:getHp()<=0 then
@@ -53,10 +53,12 @@ function BattleContext:getAllAliveEntity()
     return ret
 end
 
-function BattleContext:getAllEntityByType(type)
+function BattleContext:getAllEntityByType(type, includeSub)
     local ret = self:getAllEntity()
     for i=#ret,1,-1 do
-        if ret[i].type~=type then
+        if (not includeSub) and ret[i].type~=type then
+            table.remove(ret, i)
+        elseif includeSub and not OOUtil.isClass(ret[i], type) then
             table.remove(ret, i)
         end
     end

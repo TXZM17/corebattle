@@ -1,3 +1,4 @@
+local ActionManager = require("logic.action.ActionManager")
 local BattleDirector = {}
 
 function BattleDirector.create(context)
@@ -12,6 +13,7 @@ function BattleDirector:init(context)
     self._frameIndex = 0
     self.context = context
     self._events = {}
+    self._actionManager = ActionManager.create(self)
 end
 
 function BattleDirector:startBattle()
@@ -22,21 +24,17 @@ end
 
 function BattleDirector:mainLoop()
     while not self:checkEnd() do
-        local param = {}
-        param.entityList = self.context:getAllAliveEntity()
-        self:update(param)
+        self._frameIndex = self._frameIndex + 1
+        print("BattleDirector update:", self._frameIndex)
+        -- 处理上一帧的行为
+        self._actionManager:update()
+        -- 这里主要update相关角色，并非所有的实体都需要update的
+        self:update()
     end
 end
 
-function BattleDirector:update(param)
-    self._frameIndex = self._frameIndex + 1
-    print("BattleDirector update:", self._frameIndex)
-    if self._events[self._frameIndex] then
-        for _,event in ipairs(self._events[self._frameIndex]) do
-            event:execute(self._frameIndex)
-        end
-    end
-    local entityList = param.entityList
+function BattleDirector:updateRole()
+    local entityList = self.context:getAllAliveRole()
     for _,entity in ipairs(entityList) do
         entity:update(self._frameIndex)
     end
@@ -92,9 +90,8 @@ function BattleDirector:getRangeTargets(range)
     return targets
 end
 
-function BattleDirector:addEvent(event)
-    self._events[self._frameIndex+1] = self._events[self._frameIndex+1] or {}
-    table.insert(self._events[self._frameIndex+1], event)
+function BattleDirector:addAction(action)
+    return self._actionManager:addAction(action)
 end
 
 return BattleDirector

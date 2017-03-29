@@ -3,10 +3,10 @@ local AtkAction = Action.create()
 
 AtkAction.type = "AtkAction"
 AtkAction.ATTACK_TYPE = {
-    normal = 1,
-    magic = 2,
-    sacred = 3,
-    rebound = 4,
+    NORMAL = 1,
+    MAGIC = 2,
+    SACRED = 3,
+    REBOUND = 4,
 }
 
 function AtkAction.create(caster, targets)
