@@ -27,9 +27,9 @@ function BattleDirector:mainLoop()
         self._frameIndex = self._frameIndex + 1
         print("BattleDirector update:", self._frameIndex)
         -- 处理上一帧的行为
-        self._actionManager:update()
+        self._actionManager:update(self._frameIndex)
         -- 这里主要update相关角色，并非所有的实体都需要update的
-        self:update()
+        self:updateRole()
     end
 end
 
@@ -47,7 +47,7 @@ end
 
 function BattleDirector:checkEnd()
     local frameLimit = self._frameIndex>10
-    return self._endFlag or frameLimit or #self.context:getAllAliveEntity()<1
+    return self._endFlag or frameLimit or #self.context:getAllAliveRole()<1
 end
 
 function BattleDirector:addEntity(entity)
@@ -90,8 +90,12 @@ function BattleDirector:getRangeTargets(range)
     return targets
 end
 
+function BattleDirector:getAllAliveRole()
+    return self.context:getAllAliveRole()
+end
+
 function BattleDirector:addAction(action)
-    return self._actionManager:addAction(action)
+    return self._actionManager:addAction(self._frameIndex+1, action)
 end
 
 return BattleDirector

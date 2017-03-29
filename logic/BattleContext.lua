@@ -46,7 +46,7 @@ function BattleContext:getAllAliveRole()
     local ret = self:getAllEntityByType("RoleLogic", true)
     local max = #ret
     for i=max,1,-1 do
-        if ret[i].context:getHp()<=0 then
+        if ret[i].curHp<=0 then
             table.remove(ret, i)
         end
     end

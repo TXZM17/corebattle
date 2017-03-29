@@ -8,40 +8,10 @@ function RoleContext.create(params)
 end
 
 function RoleContext:init(params)
-    self.hpMax = params.hp;
     self.atk = params.atk or {1,1}
-    self.hp = self.hpMax
+    self.hp = params.hp
     self.modelId = params.id
     self.name = params.name
 end
-
-function RoleContext:getAtk()
-    return math.random(self.atk[1], self.atk[2])
-end
-
-function RoleContext:setHp(hp)
-    hp = math.max(0, math.min(self.hpMax, hp))
-    self.hp = hp
-end
-
-function RoleContext:getHp()
-    return self.hp
-end
-
-function RoleContext:onHurt(hurtInfo)
-    self:setHp(self:getHp()-hurtInfo.value)
-end
-
-function RoleContext:onHeal(healInfo)
-    self:setHp(self:getHp()+healInfo.value)
-end
-
--- function RoleContext:onBuff()
---
--- end
---
--- function RoleContext:onDebuff()
---
--- end
 
 return RoleContext
