@@ -23,7 +23,7 @@ function ReboundPState:setReboundScale(scale)
 end
 
 function ReboundPState:onHurt(hurtInfo)
-    local info = clone(hurtInfo)
+    local info = OOUtil.clone(hurtInfo)
     HurtInfo.allocateId(info)
     info.attackerId,info.targetId = info.targetId,info.attackerId
     info.realTargetId = info.targetId
