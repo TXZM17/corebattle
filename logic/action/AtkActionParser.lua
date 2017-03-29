@@ -1,4 +1,5 @@
 local ActionParser = require("logic.action.ActionParser")
+local HurtInfo = require("logic.battleinfo.HurtInfo")
 local AtkActionParser = ActionParser.create()
 
 AtkActionParser.type = "AtkActionParser"
@@ -30,12 +31,14 @@ function AtkActionParser:doAction()
 end
 
 function AtkActionParser:getActionInfo(hurtValue, realTarget, target)
-    return {
-        realTarget = realTarget,
-        target = target,
-        caster = self._action.caster,
-        hurtValue = hurtValue,
-    }
+    local hurtInfo = HurtInfo.create({
+        attacker = self._action.caster.id,
+        targetId = target.id,
+        realTargetId = realTarget.id,
+        attackType = self._action.attackType,
+        value = hurtValue,
+    })
+    return hurtInfo
 end
 
 return AtkActionParser

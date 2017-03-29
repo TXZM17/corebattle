@@ -76,6 +76,10 @@ function BattleDirector:searchEntity(filterFunc)
     return ret
 end
 
+function BattleDirector:getEntity(entityId)
+    return self.context:getEntity(entityId)
+end
+
 function BattleDirector:getRangeTargets(range)
     -- 我们假定所有的entity处于同一坐标系统内
     local all = self.context:getAllEntity()

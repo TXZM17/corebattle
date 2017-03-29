@@ -53,6 +53,16 @@ function BattleContext:getAllAliveEntity()
     return ret
 end
 
+function BattleContext:getAllEntityByType(type)
+    local ret = self:getAllEntity()
+    for i=#ret,1,-1 do
+        if ret[i].type~=type then
+            table.remove(ret, i)
+        end
+    end
+    return ret
+end
+
 function BattleContext:unregistEntity(entityId)
     self._entitymap[entityId] = nil
 end

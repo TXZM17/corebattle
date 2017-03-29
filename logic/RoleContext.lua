@@ -28,12 +28,12 @@ function RoleContext:getHp()
     return self.hp
 end
 
-function RoleContext:onHurt(hurtNum)
-    self:setHp(self:getHp()-hurtNum)
+function RoleContext:onHurt(hurtInfo)
+    self:setHp(self:getHp()-hurtInfo.value)
 end
 
-function RoleContext:onHeal(healNum)
-    self:setHp(self:getHp()+healNum)
+function RoleContext:onHeal(healInfo)
+    self:setHp(self:getHp()+healInfo.value)
 end
 
 -- function RoleContext:onBuff()

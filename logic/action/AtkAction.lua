@@ -2,6 +2,12 @@ local Action = require("logic.action.Action")
 local AtkAction = Action.create()
 
 AtkAction.type = "AtkAction"
+AtkAction.ATTACK_TYPE = {
+    normal = 1,
+    magic = 2,
+    sacred = 3,
+    rebound = 4,
+}
 
 function AtkAction.create(caster, targets)
     local ret = {}
@@ -15,7 +21,7 @@ function AtkAction:init(caster, targets)
 end
 
 function AtkAction:setParams(params)
-    self.params = params
+    self.attackType = params.attackType
 end
 
 function AtkAction:canPointAtk(target)

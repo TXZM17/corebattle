@@ -33,16 +33,18 @@ function RoleLogic:atk()
     self.director:addEvent(event)
 end
 
-function RoleLogic:onHurt(hurtNum)
-    self.context:onHurt(hurtNum)
+function RoleLogic:onHurt(hurtInfo)
+    self.context:onHurt(hurtInfo)
 end
 
 function RoleLogic:onPointHurt(hurtInfo)
-    --TODO
+    --TODO 点伤做些处理
+    self:onHurt(hurtInfo)
 end
 
 function RoleLogic:onRangeHurt(hurtInfo)
-    --TODO
+    --TODO aoe伤害处理
+    self:onHurt(hurtInfo)
 end
 
 return RoleLogic

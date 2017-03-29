@@ -12,4 +12,6 @@ globals = {
 	"ArrayUtil",
 	"Constants",
 	"SHAPE",
+	"clone",
+	"isClass",
 }
