@@ -23,3 +23,27 @@ function invokeWithSuper(obj, methodName, ...)
     invokeWithSuper(sobj, methodName)
     sobj[methodName](...)
 end
+
+function clone(obj)
+    local function _copy(object)
+        if type(object) ~= "table" then
+            return object
+        end
+        local new_table = {}
+        for key, value in pairs(object) do
+            new_table[_copy(key)] = _copy(value)
+        end
+        return setmetatable(new_table, getmetatable(object))
+    end
+    return _copy(obj)
+end
+
+function isClass(obj, type)
+    if obj.type==type then
+        return true
+    end
+    if getmetatable(obj)==getmetatable({}) or getmetatable(obj)==nil then
+        return false
+    end
+    return isClass(getmetatable(obj), type)
+end

@@ -9,6 +9,25 @@ end
 
 function BattleContext:init()
     self._entitymap = {}
+    self._teammap = {}
+end
+
+function BattleContext:registTeam(team)
+    for _,entity in pairs(team.members) do
+        self:registEntity(entity)
+    end
+    self._teammap[team.id] = team
+end
+
+function BattleContext:unregistTeam(teamId)
+    local team = self._teammap[teamId]
+    if team==nil then
+        return
+    end
+    for _,entity in pairs(team.members) do
+        self:unregistEntity(entity.id)
+    end
+    self._teammap[teamId] = nil
 end
 
 function BattleContext:registEntity(entity)
@@ -42,11 +61,23 @@ function BattleContext:getAllEntity()
     return ret
 end
 
-function BattleContext:getAllAliveEntity()
-    local ret = self:getAllEntity()
+function BattleContext:getAllAliveRole()
+    local ret = self:getAllEntityByType("RoleLogic", true)
     local max = #ret
     for i=max,1,-1 do
-        if ret[i].context:getHp()<=0 then
+        if ret[i].curHp<=0 then
+            table.remove(ret, i)
+        end
+    end
+    return ret
+end
+
+function BattleContext:getAllEntityByType(type, includeSub)
+    local ret = self:getAllEntity()
+    for i=#ret,1,-1 do
+        if (not includeSub) and ret[i].type~=type then
+            table.remove(ret, i)
+        elseif includeSub and not OOUtil.isClass(ret[i], type) then
             table.remove(ret, i)
         end
     end

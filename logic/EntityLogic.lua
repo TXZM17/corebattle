@@ -1,7 +1,7 @@
 local EntityLogic = {}
 
 EntityLogic._toAllocateId = 1
-EntityLogic._type = "EntityLogic"
+EntityLogic.type = "EntityLogic"
 
 function EntityLogic.create(context)
     local ret = {}
@@ -13,6 +13,9 @@ end
 function EntityLogic:init(context)
     self.context = context
     EntityLogic.allocateId(self)
+    if self.context.anchor==nil then
+        self.context.anchor = {x=0,y=0}
+    end
 end
 
 function EntityLogic:update()

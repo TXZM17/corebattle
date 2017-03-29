@@ -1,3 +1,4 @@
+local ActionManager = require("logic.action.ActionManager")
 local BattleDirector = {}
 
 function BattleDirector.create(context)
@@ -12,6 +13,7 @@ function BattleDirector:init(context)
     self._frameIndex = 0
     self.context = context
     self._events = {}
+    self._actionManager = ActionManager.create(self)
 end
 
 function BattleDirector:startBattle()
@@ -22,23 +24,20 @@ end
 
 function BattleDirector:mainLoop()
     while not self:checkEnd() do
-        local param = {}
-        param.entityList = self.context:getAllAliveEntity()
-        self:update(param)
+        -- tips:这里我们将一帧作为一个不可分割的时间，如果希望动作是有序的可以在actionManager中判定战斗是否结束
+        self._frameIndex = self._frameIndex + 1
+        print(string.format("===========frameIndex:%s============", self._frameIndex))
+        -- 处理上一帧的行为
+        self._actionManager:update(self._frameIndex)
+        -- 这里主要update相关角色，并非所有的实体都需要update的
+        self:updateRole()
     end
 end
 
-function BattleDirector:update(param)
-    self._frameIndex = self._frameIndex + 1
-    print("BattleDirector update:", self._frameIndex)
-    if self._events[self._frameIndex] then
-        for _,event in ipairs(self._events[self._frameIndex]) do
-            event:execute()
-        end
-    end
-    local entityList = param.entityList
+function BattleDirector:updateRole()
+    local entityList = self.context:getAllAliveRole()
     for _,entity in ipairs(entityList) do
-        entity:update()
+        entity:update(self._frameIndex)
     end
 end
 
@@ -48,13 +47,29 @@ function BattleDirector:endBattle()
 end
 
 function BattleDirector:checkEnd()
-    local frameLimit = self._frameIndex>10
-    return self._endFlag or frameLimit or #self.context:getAllAliveEntity()<1
+    local frameLimit = self._frameIndex>100
+    local allAliveRoles = self.context:getAllAliveRole()
+    if #allAliveRoles<1 then
+        return true
+    end
+    local sameTeamMembers = self:searchEntity(function(e)
+        return e.teamId==allAliveRoles[1].teamId and e.curHp>0
+    end)
+    local onlyOneTeam = #sameTeamMembers==#allAliveRoles
+    return self._endFlag or frameLimit or onlyOneTeam
 end
 
 function BattleDirector:addEntity(entity)
     self.context:registEntity(entity)
     entity.director = self
+end
+
+function BattleDirector:addTeam(team)
+    self.context:registTeam(team)
+end
+
+function BattleDirector:removeTeam(team)
+    self.context:unregistTeam(team.id)
 end
 
 function BattleDirector:removeEntity(entityId)
@@ -76,9 +91,34 @@ function BattleDirector:searchEntity(filterFunc)
     return ret
 end
 
-function BattleDirector:addEvent(event)
-    self._events[self._frameIndex+1] = self._events[self._frameIndex+1] or {}
-    table.insert(self._events[self._frameIndex+1], event)
+function BattleDirector:getEntity(entityId)
+    return self.context:getEntity(entityId)
+end
+
+function BattleDirector:getRangeTargets(range)
+    -- 我们假定所有的entity处于同一坐标系统内
+    local all = self.context:getAllEntity()
+    local targets = {}
+    for _,v in ipairs(all) do
+        if range:inRange(v) then
+            table.insert(targets, v)
+        end
+    end
+    return targets
+end
+
+function BattleDirector:getAllAliveRole()
+    return self.context:getAllAliveRole()
+end
+
+function BattleDirector:getAllEntityByType(type, includeSub)
+    -- 默认包括子类
+    includeSub = includeSub or true
+    return self.context:getAllEntityByType(type, includeSub)
+end
+
+function BattleDirector:addAction(action)
+    return self._actionManager:addAction(self._frameIndex+1, action)
 end
 
 return BattleDirector
