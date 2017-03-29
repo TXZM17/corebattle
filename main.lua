@@ -6,16 +6,21 @@ local BattleDirector = require("logic.BattleDirector")
 local EntityLogic = require("logic.RoleLogic")
 local RoleContext = require("logic.RoleContext")
 local BattleContext = require("logic.BattleContext")
+local ReboundPState = require("logic.permanentstate.ReboundPState")
 
 local function main()
     local battleContext = BattleContext.create()
     battleContext:setSeed(os.time())
     local director = BattleDirector.create(battleContext)
-    local names = {"Anna", "Ben", "Cuck", "Ely"}
+    local names = {"Anna", "Ben", "Cuck", "Ely", "Ful"}
     for i=1,5 do
         local context = RoleContext.create({hp=100,atk={8,13},name=names[i]})
         local entity = EntityLogic.create(context)
         director:addEntity(entity)
+        if i==2 then
+            local state = ReboundPState.create(entity)
+            entity:addPermanentState(state)
+        end
     end
     director:startBattle()
     print("=================game over=================")

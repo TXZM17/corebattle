@@ -94,6 +94,12 @@ function BattleDirector:getAllAliveRole()
     return self.context:getAllAliveRole()
 end
 
+function BattleDirector:getAllEntityByType(type, includeSub)
+    -- 默认包括子类
+    includeSub = includeSub or true
+    return self.context:getAllEntityByType(type, includeSub)
+end
+
 function BattleDirector:addAction(action)
     return self._actionManager:addAction(self._frameIndex+1, action)
 end

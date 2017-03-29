@@ -16,8 +16,10 @@ end
 
 function RoleLogic:init(context)
     EntityLogic.init(self, context)
+    self._permanentStates = {}
     self.curHp = self.context.hp
     self.name = self.context.name
+    self.curHpMax = self.context.hpMax
 end
 
 function RoleLogic:update()
@@ -39,9 +41,36 @@ function RoleLogic:atk()
 end
 
 function RoleLogic:onHurt(hurtInfo)
+    local director = self.director
+    print("hurtInfoid:", hurtInfo.attackerId)
+    local attacker = director:getEntity(hurtInfo.attackerId)
+    print(string.format("%s ---> %s  value: %s, type: %s", attacker.name, self.name, hurtInfo.value, hurtInfo.attackType))
     print("=====onhurt:", self.name, self.id, hurtInfo.value)
+    local continue = true
+    for _,state in ipairs(self._permanentStates) do
+        if state.onHurt then
+            continue,hurtInfo = state:onHurt(hurtInfo)
+        end
+        if not continue then
+            return
+        end
+    end
+    self.curHp = math.max(0, self.curHp - hurtInfo.value)
+end
+
+function RoleLogic:onHeal(healInfo)
+    print("=====onheal:", self.name, self.id, healInfo.value)
+    local continue = true
+    for _,state in ipairs(self._permanentStates) do
+        if state.onHeal then
+            continue,healInfo = state:onHurt(healInfo)
+        end
+        if not continue then
+            return
+        end
+    end
     self.curHp = self.curHp or self.context.hp
-    self.curHp = self.curHp - hurtInfo.value
+    self.curHp = math.min(self.curHpMax, self.curHp + healInfo.value)
 end
 
 function RoleLogic:onPointHurt(hurtInfo)
@@ -56,6 +85,18 @@ end
 
 function RoleLogic:getRealAtk()
     return math.random(self.context.atk[1], self.context.atk[2])
+end
+
+function RoleLogic:addPermanentState(state)
+    table.insert(self._permanentStates, state)
+end
+
+function RoleLogic:removePermanentState(state)
+    for k,v in ipairs(self._permanentStates) do
+        if state.id==v.id then
+            table.remove(self._permanentStates, k)
+        end
+    end
 end
 
 return RoleLogic

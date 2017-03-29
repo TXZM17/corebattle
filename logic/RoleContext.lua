@@ -12,6 +12,7 @@ function RoleContext:init(params)
     self.hp = params.hp
     self.modelId = params.id
     self.name = params.name
+    self.hpMax = params.hpMax or self.hp
 end
 
 return RoleContext

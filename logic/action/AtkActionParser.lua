@@ -36,7 +36,7 @@ function AtkActionParser:getActionInfo(hurtValue, realTarget, target)
         return self._action.hurtInfo
     end
     local hurtInfo = HurtInfo.create({
-        attacker = self._action.caster.id,
+        attackerId = self._action.caster.id,
         targetId = target.id,
         realTargetId = realTarget.id,
         attackType = self._action.attackType,
