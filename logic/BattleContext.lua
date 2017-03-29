@@ -9,6 +9,25 @@ end
 
 function BattleContext:init()
     self._entitymap = {}
+    self._teammap = {}
+end
+
+function BattleContext:registTeam(team)
+    for _,entity in pairs(team.members) do
+        self:registEntity(entity)
+    end
+    self._teammap[team.id] = team
+end
+
+function BattleContext:unregistTeam(teamId)
+    local team = self._teammap[teamId]
+    if team==nil then
+        return
+    end
+    for _,entity in pairs(team.members) do
+        self:unregistEntity(entity.id)
+    end
+    self._teammap[teamId] = nil
 end
 
 function BattleContext:registEntity(entity)

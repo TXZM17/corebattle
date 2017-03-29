@@ -23,16 +23,19 @@ function RoleLogic:init(context)
 end
 
 function RoleLogic:update()
-    print("id:", self.id, "hp:", self.curHp)
+    print("name:", self.name, "hp:", self.curHp)
     self:atk()
 end
 
 function RoleLogic:atk()
     local targets = self.director:searchEntity(function(entity)
-        return entity.id~=self.id and entity.curHp>0
+        return entity.id~=self.id and entity.teamId~=self.teamId and entity.curHp>0
     end)
     ArrayUtil.shuffle(targets)
     targets = ArrayUtil.copyArray(targets,1,2)
+    if #targets<1 then
+        return
+    end
     local atkAction = AtkAction.create(self, targets)
     atkAction:setParams({
         attackType=AtkAction.ATTACK_TYPE.NORMAL
@@ -42,10 +45,8 @@ end
 
 function RoleLogic:onHurt(hurtInfo)
     local director = self.director
-    print("hurtInfoid:", hurtInfo.attackerId)
     local attacker = director:getEntity(hurtInfo.attackerId)
     print(string.format("%s ---> %s  value: %s, type: %s", attacker.name, self.name, hurtInfo.value, hurtInfo.attackType))
-    print("=====onhurt:", self.name, self.id, hurtInfo.value)
     local continue = true
     for _,state in ipairs(self._permanentStates) do
         if state.onHurt then

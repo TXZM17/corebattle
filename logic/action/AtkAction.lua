@@ -22,6 +22,7 @@ end
 
 function AtkAction:setParams(params)
     self.attackType = params.attackType
+    self.hurtInfo = params.hurtInfo
 end
 
 function AtkAction:canPointAtk(target)

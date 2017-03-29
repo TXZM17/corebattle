@@ -24,8 +24,9 @@ end
 
 function BattleDirector:mainLoop()
     while not self:checkEnd() do
+        -- tips:这里我们将一帧作为一个不可分割的时间，如果希望动作是有序的可以在actionManager中判定战斗是否结束
         self._frameIndex = self._frameIndex + 1
-        print("BattleDirector update:", self._frameIndex)
+        print(string.format("===========frameIndex:%s============", self._frameIndex))
         -- 处理上一帧的行为
         self._actionManager:update(self._frameIndex)
         -- 这里主要update相关角色，并非所有的实体都需要update的
@@ -46,13 +47,29 @@ function BattleDirector:endBattle()
 end
 
 function BattleDirector:checkEnd()
-    local frameLimit = self._frameIndex>10
-    return self._endFlag or frameLimit or #self.context:getAllAliveRole()<1
+    local frameLimit = self._frameIndex>100
+    local allAliveRoles = self.context:getAllAliveRole()
+    if #allAliveRoles<1 then
+        return true
+    end
+    local sameTeamMembers = self:searchEntity(function(e)
+        return e.teamId==allAliveRoles[1].teamId and e.curHp>0
+    end)
+    local onlyOneTeam = #sameTeamMembers==#allAliveRoles
+    return self._endFlag or frameLimit or onlyOneTeam
 end
 
 function BattleDirector:addEntity(entity)
     self.context:registEntity(entity)
     entity.director = self
+end
+
+function BattleDirector:addTeam(team)
+    self.context:registTeam(team)
+end
+
+function BattleDirector:removeTeam(team)
+    self.context:unregistTeam(team.id)
 end
 
 function BattleDirector:removeEntity(entityId)

@@ -34,6 +34,7 @@ function ActionManager:parse(action)
     local actionType = action.type
     local ParserType = self._parserMap[actionType]
     if ParserType then
+        print("parse action:", action.id)
         local parser = ParserType.create(self._director, action)
         parser:doAction()
     else

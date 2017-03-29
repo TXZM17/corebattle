@@ -35,10 +35,11 @@ function ReboundPState:onHurt(hurtInfo)
         value = hurtInfo.value*self.reboundScale
     })
     local target = self.owner.director:getEntity(hurtInfo.attackerId)
-    local action = AtkAction.create(self.owner, target)
+    local action = AtkAction.create(self.owner, {target})
     action:setParams({
         attackType=AtkAction.ATTACK_TYPE.REBOUND,
         hurtInfo = info})
+    print("==========rebound action:", action.id)
     self.owner.director:addAction(action)
     return true, hurtInfo
 end
