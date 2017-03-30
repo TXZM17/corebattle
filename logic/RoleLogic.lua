@@ -1,5 +1,6 @@
 local EntityLogic = require("logic.EntityLogic")
 local AtkAction = require("logic.action.AtkAction")
+local CalculatorChain = require("logic.calculate.CalculatorChain")
 
 local RoleLogic = EntityLogic.create({})
 
@@ -24,6 +25,8 @@ function RoleLogic:init(context)
     self.baseContext = self.context
     self.context = OOUtil.clone(self.baseContext)
     self.name = self.context.name
+    -- 一些effect可以给role添加calculator
+    self._chain = CalculatorChain.create(self)
 end
 
 function RoleLogic:update()
@@ -88,8 +91,9 @@ function RoleLogic:onRangeHurt(hurtInfo)
 end
 
 function RoleLogic:getRealAtk()
-    local atk = self:getProValue("atk", false)
-    return math.random(atk[1], atk[2])
+    local atkMin = self:getProValue("atkMin", false)
+    local atkMax = self:getProValue("atkMax", false)
+    return math.random(atkMin, atkMax)
 end
 
 function RoleLogic:addPermanentState(state)
@@ -104,9 +108,20 @@ function RoleLogic:removePermanentState(state)
     end
 end
 
+function RoleLogic:addCalculator(calculator)
+    self._chain:addCalculator(calculator)
+end
+
+function RoleLogic:removeCalculator(calculatorId)
+    self._chain:removeCalculator(calculatorId)
+end
+
 function RoleLogic:getProValue(proName, isBase)
     local context = isBase and self.baseContext or self.context
     -- 特殊效果的计算链(包括在初始化函数中内置添加的)
+    if not isBase then
+        self._chain:calculate(proName)
+    end
     return context[proName]
 end
 

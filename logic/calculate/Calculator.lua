@@ -18,16 +18,19 @@ function Calculator:init()
     self._targetPros = {}
 end
 
-function Calculator:calculate(context, lastResult)
-    error("this is a abstract calculate component", context, lastResult, self.id)
+function Calculator:calculate(lastResult, proName, baseContext, context)
+    error("this is a abstract calculate component", proName, baseContext, context, lastResult, self.id)
 end
 
 function Calculator:involved(proName)
+    if proName==nil then
+        return false
+    end
     -- 是否参与计算
-    if self._targetPros["all"] then
+    if self._targetPros["all"] or self._targetPros[proName] then
         return true
     end
-    return self._targetPros[proName]
+    return false
 end
 
 function Calculator:setInvolvedPros(proNames)

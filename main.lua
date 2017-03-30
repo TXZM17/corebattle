@@ -8,6 +8,7 @@ local RoleContext = require("logic.RoleContext")
 local BattleContext = require("logic.BattleContext")
 local ReboundPState = require("logic.permanentstate.ReboundPState")
 local Team = require("logic.Team")
+local ScaleCalculator = require("logic.calculate.ScaleCalculator")
 
 local function main()
     local battleContext = BattleContext.create()
@@ -16,7 +17,7 @@ local function main()
     local names = {"Anna", "Ben", "Cuck", "Ely", "Ful"}
     local player = Team.create()
     for i=1,5 do
-        local context = RoleContext.create({hp=100,atk={8,13},name=names[i]})
+        local context = RoleContext.create({hp=100,atkMin=8,atkMax=13,name=names[i]})
         local entity = EntityLogic.create(context)
         if i==2 then
             local state = ReboundPState.create(entity)
@@ -28,11 +29,14 @@ local function main()
     names = {"Vnna", "Wen", "Xuck", "Yly", "Zul"}
     local enemy = Team.create()
     for i=1,5 do
-        local context = RoleContext.create({hp=100,atk={8,13},name=names[i]})
+        local context = RoleContext.create({hp=100,atkMin=8,atkMax=13,name=names[i]})
         local entity = EntityLogic.create(context)
         if i==2 then
             local state = ReboundPState.create(entity)
             entity:addPermanentState(state)
+            local cal = ScaleCalculator.create(1.2)
+            cal:setInvolvedPros({atkMin=true,atkMax=true})
+            entity:addCalculator(cal)
         end
         enemy:addMember(entity)
     end

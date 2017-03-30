@@ -15,19 +15,20 @@ function CalculatorChain:init(owner)
     self._owner = owner
     self._calculators = {}
     self._context = self._owner.context
+    self._baseContext = self._owner.baseContext
     -- default sort by priority
     self._sfFunc = PrioritySorter
 end
 
 function CalculatorChain:calculate(proName)
     local context = self:getOnceContext()
-    local involvedCalculators = filterArray(self._calculators, function(e)
-        return e:involved()
+    local involvedCalculators = ArrayUtil.filterArray(self._calculators, function(e)
+        return e:involved(proName)
     end)
     local components = self._sfFunc(involvedCalculators)
-    local lastResult = nil
+    local lastResult = context[proName]
     for _,comp in ipairs(components) do
-        local continue, value = comp:calculate(context, lastResult, proName)
+        local continue, value = comp:calculate(lastResult, proName, self._baseContext, context)
         lastResult = value
         if not continue then
             break
@@ -37,12 +38,12 @@ function CalculatorChain:calculate(proName)
 end
 
 --notice: don't allow same id component,but same type component, be careful
-function CalculatorChain:addComponent(component)
-    self:removeComponent(component.id)
+function CalculatorChain:addCalculator(component)
+    self:removeCalculator(component.id)
     table.insert(self._calculators, component)
 end
 
-function CalculatorChain:getComponent(comp_id)
+function CalculatorChain:getCalculator(comp_id)
     for _,comp in ipairs(self._calculators) do
         if comp.id == comp_id then
             return comp
@@ -50,7 +51,7 @@ function CalculatorChain:getComponent(comp_id)
     end
 end
 
-function CalculatorChain:removeComponent(comp_id)
+function CalculatorChain:removeCalculator(comp_id)
     for i,comp in ipairs(self._calculators) do
         if comp.id==comp_id then
             table.remove(self._calculators, i);
@@ -60,7 +61,7 @@ function CalculatorChain:removeComponent(comp_id)
     return false
 end
 
-function CalculatorChain:clearComponent()
+function CalculatorChain:clearCalculator()
     self._calculators = {}
 end
 

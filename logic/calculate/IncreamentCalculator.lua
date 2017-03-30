@@ -8,7 +8,7 @@ function IncrementCalculator.create(increment)
     local ret = {}
     setmetatable(ret, {__index=IncrementCalculator})
     ret:init(increment)
-    return
+    return ret
 end
 
 function IncrementCalculator:init(increment)
@@ -16,7 +16,7 @@ function IncrementCalculator:init(increment)
     self.increment = increment
 end
 
-function IncrementCalculator:calculate(context, lastResult, proName)
+function IncrementCalculator:calculate(lastResult, proName, _, context)
     print("calculator:", self.type, self.id)
     if lastResult then
         lastResult = lastResult + self.increment

@@ -3,11 +3,12 @@ local ScaleCalculator = Calculator.create()
 
 ScaleCalculator.type = "ScaleCalculator"
 
+-- 比例，是否是原始属性的比例
 function ScaleCalculator.create(scale)
     local ret = {}
     setmetatable(ret, {__index=ScaleCalculator})
     ret:init(scale)
-    return
+    return ret
 end
 
 function ScaleCalculator:init(scale)
@@ -15,13 +16,9 @@ function ScaleCalculator:init(scale)
     self.scale = scale
 end
 
-function ScaleCalculator:calculate(context, lastResult, proName)
+function ScaleCalculator:calculate(lastResult)
     print("calculator:", self.type, self.id)
-    if lastResult then
-        lastResult = lastResult * self.scale
-    else
-        lastResult = context[proName] * self.scale
-    end
+    lastResult = lastResult*self.scale
     return true, lastResult
 end
 

@@ -8,7 +8,8 @@ function RoleContext.create(params)
 end
 
 function RoleContext:init(params)
-    self.atk = params.atk or {1,1}
+    self.atkMin = params.atkMin or 1
+    self.atkMax = params.atkMax or 1
     self.hp = params.hp
     self.modelId = params.id
     self.name = params.name
