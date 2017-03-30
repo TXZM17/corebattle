@@ -16,13 +16,14 @@ function ProEffect.create(proNames, changeType, value)
 end
 
 function ProEffect:init(proNames, changeType, value)
-    ProEffect.init(self, proNames, changeType, value)
+    Effect.init(self, proNames, changeType, value)
     self.proNames = proNames
     self.changeType = changeType
     self.value = value
 end
 
 function ProEffect:doEffect(target)
+    print("=======pro effect do effect")
     for _,proName in pairs(self.proNames) do
         local delta = 0
         if self.changeType==ProEffect.CHANGE_TYPE.INCREMENT then
@@ -33,6 +34,7 @@ function ProEffect:doEffect(target)
             delta = target.baseContext[proName]*self.value
         end
         target.context[proName] = target.context[proName] + delta
+        print("ProEffect do effect:", proName, "increased ", delta)
     end
 end
 
@@ -47,6 +49,7 @@ function ProEffect:undoEffect(target)
             delta = target.baseContext[proName]*self.value
         end
         target.context[proName] = target.context[proName] - delta
+        print("ProEffect undo effect:", proName, "decreased ", delta)
     end
 end
 

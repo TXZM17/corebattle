@@ -9,6 +9,8 @@ local BattleContext = require("logic.BattleContext")
 local ReboundPState = require("logic.permanentstate.ReboundPState")
 local Team = require("logic.Team")
 local ScaleCalculator = require("logic.calculate.ScaleCalculator")
+local ProEffect = require("logic.effect.ProEffect")
+local FiniteTimeBuff = require("logic.effect.FiniteTimeBuff")
 
 local function main()
     local battleContext = BattleContext.create()
@@ -22,6 +24,10 @@ local function main()
         if i==2 then
             local state = ReboundPState.create(entity)
             entity:addPermanentState(state)
+            local effect = ProEffect.create({"atkMin","atkMax"}, ProEffect.CHANGE_TYPE.INCREMENT, 10)
+            local buff = FiniteTimeBuff.create(3)
+            buff:addEffect(effect)
+            entity:addBuff(buff)
         end
         player:addMember(entity)
     end

@@ -2,6 +2,7 @@ local EntityLogic = require("logic.EntityLogic")
 local AtkAction = require("logic.action.AtkAction")
 local CalculatorChain = require("logic.calculate.CalculatorChain")
 local PermanentStateManager = require("logic.permanentstate.PermanentStateManager")
+local BuffManager = require("logic.effect.BuffManager")
 
 local RoleLogic = EntityLogic.create({})
 
@@ -23,6 +24,7 @@ function RoleLogic:init(context)
     -- 这里需要按照context中的属性初始化cur属性
     -- 属性变动分几个阶段：战斗初始化、角色属性加成、特殊效果（eg:1.5倍加成后的攻击力）
     self._permanentStateManager = PermanentStateManager.create(self)
+    self._buffManager = BuffManager.create(self)
     self.baseContext = self.context
     self.context = OOUtil.clone(self.baseContext)
     self.name = self.context.name
@@ -32,6 +34,7 @@ end
 
 function RoleLogic:update(frameIndex)
     print("name:", self:getProValue("name"), "hp:", self:getProValue("hp"), frameIndex)
+    self._buffManager:update(frameIndex)
     self:atk()
 end
 
@@ -97,6 +100,14 @@ end
 
 function RoleLogic:removePermanentState(state)
     return self._permanentStateManager:removeState(state.id)
+end
+
+function RoleLogic:addBuff(buff)
+    return self._buffManager:addBuff(buff)
+end
+
+function RoleLogic:removeBuff(buffId)
+    return self._buffManager:removeBuff(buffId)
 end
 
 function RoleLogic:addCalculator(calculator)

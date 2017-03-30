@@ -14,9 +14,10 @@ end
 
 function BuffManager:addBuff(buff)
     -- TODO 如果buff失效，添加失败；如果buff存在且可以叠加，那么叠加buff；如果buff存在且不可以叠加，那么重置buff
-    if buff:checkValid(self.owner) or self:getBuff(buff.id) then
+    if not buff:checkValid(self.owner) or self:getBuff(buff.id) then
         return false
     end
+    print(self.owner.name, " add buff", buff.type, buff.id)
     table.insert(self._buffContainer, buff)
     buff:doBuff(self.owner)
     return true
