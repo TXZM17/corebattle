@@ -40,7 +40,7 @@ local function main()
     director:startBattle()
     print("=================game over=================")
     for _,v in ipairs(director:getAllAliveRole()) do
-        print(string.format("%s %s alive hp:%s", v.id, v.name, v.curHp))
+        print(string.format("%s %s alive hp:%s", v.id, v.name, v:getProValue("hp")))
     end
 end
 

@@ -16,14 +16,18 @@ end
 
 function RoleLogic:init(context)
     EntityLogic.init(self, context)
+    -- context中的是RoleLogic的模板属性，一般在战斗开始前就已经被固定，一些极特殊的Effect可以影响此数据
+    -- 当前的属性名称加上cur，使用驼峰命名法
+    -- 这里需要按照context中的属性初始化cur属性
+    -- 属性变动分几个阶段：战斗初始化、角色属性加成、特殊效果（eg:1.5倍加成后的攻击力）
     self._permanentStates = {}
-    self.curHp = self.context.hp
+    self.baseContext = self.context
+    self.context = OOUtil.clone(self.baseContext)
     self.name = self.context.name
-    self.curHpMax = self.context.hpMax
 end
 
 function RoleLogic:update()
-    print("name:", self.name, "hp:", self.curHp)
+    print("name:", self:getProValue("name"), "hp:", self:getProValue("hp"))
     self:atk()
 end
 
@@ -56,7 +60,7 @@ function RoleLogic:onHurt(hurtInfo)
             return
         end
     end
-    self.curHp = math.max(0, self.curHp - hurtInfo.value)
+    self:changeProValue("hp", math.max(0, self:getProValue("hp") - hurtInfo.value))
 end
 
 function RoleLogic:onHeal(healInfo)
@@ -70,8 +74,7 @@ function RoleLogic:onHeal(healInfo)
             return
         end
     end
-    self.curHp = self.curHp or self.context.hp
-    self.curHp = math.min(self.curHpMax, self.curHp + healInfo.value)
+    self:changeProValue("hp", math.min(self:getProValue("hpMax"), self:getProValue("hp") + healInfo.value))
 end
 
 function RoleLogic:onPointHurt(hurtInfo)
@@ -85,7 +88,8 @@ function RoleLogic:onRangeHurt(hurtInfo)
 end
 
 function RoleLogic:getRealAtk()
-    return math.random(self.context.atk[1], self.context.atk[2])
+    local atk = self:getProValue("atk", false)
+    return math.random(atk[1], atk[2])
 end
 
 function RoleLogic:addPermanentState(state)
@@ -100,8 +104,25 @@ function RoleLogic:removePermanentState(state)
     end
 end
 
+function RoleLogic:getProValue(proName, isBase)
+    local context = isBase and self.baseContext or self.context
+    -- 特殊效果的计算链(包括在初始化函数中内置添加的)
+    return context[proName]
+end
+
+function RoleLogic:changeProValue(proName, value, isBase)
+    local context = isBase and self.baseContext or self.context
+    assert(context[proName], string.format("undefined proName: %s", proName))
+    context[proName] = value
+end
+
+function RoleLogic:setOrAddProValue(proName, value, isBase)
+    local context = isBase and self.baseContext or self.context
+    context[proName] = value
+end
+
 function RoleLogic:isAlive()
-    return self.curHp>0
+    return self:getProValue("hp", false)>0
 end
 
 return RoleLogic

@@ -53,7 +53,7 @@ function BattleDirector:checkEnd()
         return true
     end
     local sameTeamMembers = self:searchEntity(function(e)
-        return e.teamId==allAliveRoles[1].teamId and e.curHp>0
+        return e.teamId==allAliveRoles[1].teamId and e:isAlive()
     end)
     local onlyOneTeam = #sameTeamMembers==#allAliveRoles
     return self._endFlag or frameLimit or onlyOneTeam
