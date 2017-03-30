@@ -1,6 +1,7 @@
 local EntityLogic = require("logic.EntityLogic")
 local AtkAction = require("logic.action.AtkAction")
 local CalculatorChain = require("logic.calculate.CalculatorChain")
+local PermanentStateManager = require("logic.permanentstate.PermanentStateManager")
 
 local RoleLogic = EntityLogic.create({})
 
@@ -21,7 +22,7 @@ function RoleLogic:init(context)
     -- 当前的属性名称加上cur，使用驼峰命名法
     -- 这里需要按照context中的属性初始化cur属性
     -- 属性变动分几个阶段：战斗初始化、角色属性加成、特殊效果（eg:1.5倍加成后的攻击力）
-    self._permanentStates = {}
+    self._permanentStateManager = PermanentStateManager.create(self)
     self.baseContext = self.context
     self.context = OOUtil.clone(self.baseContext)
     self.name = self.context.name
@@ -29,8 +30,8 @@ function RoleLogic:init(context)
     self._chain = CalculatorChain.create(self)
 end
 
-function RoleLogic:update()
-    print("name:", self:getProValue("name"), "hp:", self:getProValue("hp"))
+function RoleLogic:update(frameIndex)
+    print("name:", self:getProValue("name"), "hp:", self:getProValue("hp"), frameIndex)
     self:atk()
 end
 
@@ -54,30 +55,24 @@ function RoleLogic:onHurt(hurtInfo)
     local director = self.director
     local attacker = director:getEntity(hurtInfo.attackerId)
     print(string.format("%s ---> %s  value: %s, type: %s", attacker.name, self.name, hurtInfo.value, hurtInfo.attackType))
-    local continue = true
-    for _,state in ipairs(self._permanentStates) do
-        if state.onHurt then
-            continue,hurtInfo = state:onHurt(hurtInfo)
-        end
-        if not continue then
-            return
-        end
+    local continue,params = self._permanentStateManager:invoke(PermanentStateManager.INVOKE_POINT.BEFORE, "onHurt", {hurtInfo=hurtInfo})
+    if not continue then
+        return
     end
+    hurtInfo = params.hurtInfo
     self:changeProValue("hp", math.max(0, self:getProValue("hp") - hurtInfo.value))
+    self._permanentStateManager:invoke(PermanentStateManager.INVOKE_POINT.AFTER, "onHurt", {hurtInfo=hurtInfo})
 end
 
 function RoleLogic:onHeal(healInfo)
     print("=====onheal:", self.name, self.id, healInfo.value)
-    local continue = true
-    for _,state in ipairs(self._permanentStates) do
-        if state.onHeal then
-            continue,healInfo = state:onHurt(healInfo)
-        end
-        if not continue then
-            return
-        end
+    local continue,params = self._permanentStateManager:invoke(PermanentStateManager.INVOKE_POINT.BEFORE, "onHeal", {healInfo=healInfo})
+    if not continue then
+        return
     end
+    healInfo = params.healInfo
     self:changeProValue("hp", math.min(self:getProValue("hpMax"), self:getProValue("hp") + healInfo.value))
+    self._permanentStateManager:invoke(PermanentStateManager.INVOKE_POINT.AFTER, "onHeal", {healInfo=healInfo})
 end
 
 function RoleLogic:onPointHurt(hurtInfo)
@@ -97,15 +92,11 @@ function RoleLogic:getRealAtk()
 end
 
 function RoleLogic:addPermanentState(state)
-    table.insert(self._permanentStates, state)
+    return self._permanentStateManager:addState(state)
 end
 
 function RoleLogic:removePermanentState(state)
-    for k,v in ipairs(self._permanentStates) do
-        if state.id==v.id then
-            table.remove(self._permanentStates, k)
-        end
-    end
+    return self._permanentStateManager:removeState(state.id)
 end
 
 function RoleLogic:addCalculator(calculator)

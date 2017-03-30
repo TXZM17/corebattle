@@ -3,6 +3,7 @@ local Buff = {}
 Buff.type = "Buff"
 Buff._toAllocateId = 1
 
+-- Buff是对Effect的包装，它为effect提供生命周期管理和组行为
 function Buff.create(...)
     local ret = {}
     setmetatable(ret, {__index=Buff})
@@ -24,10 +25,7 @@ function Buff:doBuff(target)
 end
 
 function Buff:update(target)
-    self.valid = self:checkValid(target)
-    if not self.valid then
-        --在target的removeBuff方法中应该调用undoBuff
-        target:removeBuff(self)
+    if not self:checkValid(target) then
         return
     end
     for _,effect in ipairs(self._effectList) do
@@ -39,6 +37,33 @@ function Buff:undoBuff(target)
     for _,effect in ipairs(self._effectList) do
         effect:undoEffect(target)
     end
+end
+
+function Buff:addEffect(effect)
+    if self:getEffect(effect.id) then
+        --不能重复
+        return false
+    end
+    table.insert(self._effectList, effect)
+    return true
+end
+
+function Buff:getEffect(effectId)
+    for _,v in ipairs(self._effectList) do
+        if v.id==effectId then
+            return v
+        end
+    end
+end
+
+function Buff:removeEffect(effectId)
+    for k,v in ipairs(self._effectList) do
+        if v.id==effectId then
+            table.remove(self._effectList, k)
+            return true
+        end
+    end
+    return false
 end
 
 function Buff:resetBuff()
@@ -56,7 +81,7 @@ function Buff.allocateId(buff)
 end
 
 function Buff:checkValid(target)
-    return self.valid and target.hp<=0
+    return self.valid and target:isAlive()
 end
 
 return Buff

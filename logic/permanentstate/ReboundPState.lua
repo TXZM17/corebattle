@@ -1,4 +1,5 @@
 local PermanentState = require("logic.permanentstate.PermanentState")
+local PermanentStateManager = require("logic.permanentstate.PermanentStateManager")
 local HurtInfo = require("logic.battleinfo.HurtInfo")
 local AtkAction = require("logic.action.AtkAction")
 local ReboundPState = PermanentState.create()
@@ -22,10 +23,11 @@ function ReboundPState:setReboundScale(scale)
     self.reboundScale = scale
 end
 
-function ReboundPState:onHurt(hurtInfo)
+function ReboundPState:onHurt(params)
+    local hurtInfo = params.hurtInfo
     if hurtInfo.attackType==AtkAction.ATTACK_TYPE.REBOUND then
         -- 防止无限反弹
-        return true, hurtInfo
+        return true, params
     end
     print(string.format("%s:发动了反击", self.owner.name))
     local info = HurtInfo.create({
@@ -41,7 +43,13 @@ function ReboundPState:onHurt(hurtInfo)
         hurtInfo = info})
     print("==========rebound action:", action.id)
     self.owner.director:addAction(action)
-    return true, hurtInfo
+    return true, params
+end
+
+function ReboundPState:onNotify(invokePoint, eventName, params)
+    if eventName=="onHurt" and invokePoint==PermanentStateManager.INVOKE_POINT.BEFORE then
+        return self:onHurt(params)
+    end
 end
 
 return ReboundPState

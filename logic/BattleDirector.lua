@@ -30,14 +30,14 @@ function BattleDirector:mainLoop()
         -- 处理上一帧的行为
         self._actionManager:update(self._frameIndex)
         -- 这里主要update相关角色，并非所有的实体都需要update的
-        self:updateRole()
+        self:updateRole(self._frameIndex)
     end
 end
 
-function BattleDirector:updateRole()
+function BattleDirector:updateRole(frameIndex)
     local entityList = self.context:getAllAliveRole()
     for _,entity in ipairs(entityList) do
-        entity:update(self._frameIndex)
+        entity:update(frameIndex)
     end
 end
 

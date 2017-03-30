@@ -12,6 +12,13 @@ end
 
 function PermanentState:init(owner)
     self.owner = owner
+    self.priority = 1
+end
+
+function PermanentState:onNotify(invokePoint, eventName, params)
+    print(self.owner.id, "permanentstate notified by event:", invokePoint, eventName, params)
+    local continue = true
+    return continue
 end
 
 function PermanentState.allocateId(state)
