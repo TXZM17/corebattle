@@ -65,11 +65,19 @@ function BattleDirector:addEntity(entity)
 end
 
 function BattleDirector:addTeam(team)
+    for _,v in pairs(team.members) do
+        self:addEntity(v)
+    end
     self.context:registTeam(team)
 end
 
-function BattleDirector:removeTeam(team)
-    self.context:unregistTeam(team.id)
+function BattleDirector:removeTeam(teamId)
+    local team = self.context:unregistTeam(teamId)
+    if team and team.members then
+        for _,v in pairs(team.members) do
+            self:removeEntity(v.id)
+        end
+    end
 end
 
 function BattleDirector:removeEntity(entityId)

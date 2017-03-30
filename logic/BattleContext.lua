@@ -24,10 +24,8 @@ function BattleContext:unregistTeam(teamId)
     if team==nil then
         return
     end
-    for _,entity in pairs(team.members) do
-        self:unregistEntity(entity.id)
-    end
     self._teammap[teamId] = nil
+    return team
 end
 
 function BattleContext:registEntity(entity)

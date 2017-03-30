@@ -18,25 +18,25 @@ local function main()
     for i=1,5 do
         local context = RoleContext.create({hp=100,atk={8,13},name=names[i]})
         local entity = EntityLogic.create(context)
-        director:addEntity(entity)
         if i==2 then
             local state = ReboundPState.create(entity)
             entity:addPermanentState(state)
         end
         player:addMember(entity)
     end
+    director:addTeam(player)
     names = {"Vnna", "Wen", "Xuck", "Yly", "Zul"}
     local enemy = Team.create()
     for i=1,5 do
         local context = RoleContext.create({hp=100,atk={8,13},name=names[i]})
         local entity = EntityLogic.create(context)
-        director:addEntity(entity)
         if i==2 then
             local state = ReboundPState.create(entity)
             entity:addPermanentState(state)
         end
         enemy:addMember(entity)
     end
+    director:addTeam(enemy)
     director:startBattle()
     print("=================game over=================")
     for _,v in ipairs(director:getAllAliveRole()) do
