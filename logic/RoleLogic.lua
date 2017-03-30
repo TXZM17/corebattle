@@ -29,7 +29,7 @@ end
 
 function RoleLogic:atk()
     local targets = self.director:searchEntity(function(entity)
-        return entity.id~=self.id and entity.teamId~=self.teamId and entity.curHp>0
+        return entity.id~=self.id and entity.teamId~=self.teamId and entity:isAlive()
     end)
     ArrayUtil.shuffle(targets)
     targets = ArrayUtil.copyArray(targets,1,2)
@@ -98,6 +98,10 @@ function RoleLogic:removePermanentState(state)
             table.remove(self._permanentStates, k)
         end
     end
+end
+
+function RoleLogic:isAlive()
+    return self.curHp>0
 end
 
 return RoleLogic
