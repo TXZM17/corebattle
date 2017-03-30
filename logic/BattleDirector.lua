@@ -37,8 +37,14 @@ end
 function BattleDirector:updateRole(frameIndex)
     local entityList = self.context:getAllAliveRole()
     for _,entity in ipairs(entityList) do
+        entity:frameStart(frameIndex)
+    end
+    for _,entity in ipairs(entityList) do
         entity:update(frameIndex)
     end
+    -- for _,entity in ipairs(entityList) do
+    --     entity:frameEnd(frameIndex)
+    -- end
 end
 
 function BattleDirector:endBattle()

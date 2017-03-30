@@ -47,6 +47,7 @@ local function main()
         enemy:addMember(entity)
     end
     director:addTeam(enemy)
+    print("=================game start================")
     director:startBattle()
     print("=================game over=================")
     for _,v in ipairs(director:getAllAliveRole()) do

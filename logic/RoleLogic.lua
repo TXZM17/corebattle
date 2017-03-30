@@ -32,11 +32,18 @@ function RoleLogic:init(context)
     self._chain = CalculatorChain.create(self)
 end
 
+function RoleLogic:frameStart(frameIndex)
+    self._buffManager:update(frameIndex)
+end
+
 function RoleLogic:update(frameIndex)
     print("name:", self:getProValue("name"), "hp:", self:getProValue("hp"), frameIndex)
-    self._buffManager:update(frameIndex)
     self:atk()
 end
+
+-- function RoleLogic:frameEnd(frameIndex)
+--     -- TODO
+-- end
 
 function RoleLogic:atk()
     local targets = self.director:searchEntity(function(entity)
